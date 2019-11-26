@@ -12,11 +12,9 @@ function suffletext(elemente_text){
         $(this).data("text",$(this).text());
         text = new ShuffleText(this);
         text.start();
-        console.log(`iniciou ${elemente_text}`);
     }).mouseleave(function() {
         text.stop();
-        this.innerText = $(this).data("text"); 
-        console.log(`finalizou  ${elemente_text}`);
+        this.innerText = $(this).data("text");
     });
 }
 function shtext(element){

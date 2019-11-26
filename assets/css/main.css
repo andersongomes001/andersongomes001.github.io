@@ -7,6 +7,10 @@ https://flatuicolors.com/palette/gb
 .navbar-light .navbar-nav .nav-link {
   color: #ffffff !important; }
 
+.card-header.widget {
+  background-color: #e84118 !important;
+  color: #ffffff; }
+
 body {
   background-color: #353b48 !important;
   background: #ffffff;
@@ -18,7 +22,7 @@ body {
   background-color: #718093 !important;
   color: #ffffff !important; }
 
-.card-title {
+.card-title.posts {
   color: #e84118 !important; }
 
 #content a {
@@ -41,7 +45,7 @@ pre.highlight {
   border-radius: 10px;
   padding-left: 10px; }
 
-.card {
+.card.posts {
   background-color: transparent;
   border: none; }
 
@@ -52,3 +56,16 @@ pre.highlight {
 .pag_active {
   background-color: #718093 !important;
   border-color: #718093 !important; }
+
+/*
+ul.pager { 
+  text-align: center; 
+  list-style: none; 
+}
+ul.pager li {
+  display: inline;
+  border: 1px solid black; 
+  padding: 10px; 
+  margin: 5px;
+}
+*/
